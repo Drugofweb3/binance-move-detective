@@ -1,0 +1,12 @@
+{
+  "name": "binance-move-detective",
+  "version": "1.0.0",
+  "description": "An AI market investigation agent that explains why crypto assets move.",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5"
+  }
+}
