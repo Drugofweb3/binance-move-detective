@@ -117,6 +117,7 @@ export function investigateMove({
     moveFingerprint = "LIQUIDITY_SHOCK";
   }
 
+  // Confidence score
   const confidence = Math.min(
     100,
     evidence.reduce(
@@ -124,21 +125,24 @@ export function investigateMove({
       0
     )
   );
-const detectiveScore = Math.min(
-  100,
-  Math.round(
-    confidence +
-    Math.min(20, Math.abs(priceDifference) * 2) +
-    Math.min(10, Math.abs(openInterestChange))
-  )
-);
-  
-return {
-  evidence,
-  confidence,
-  detectiveScore,
-  marketType,
-  moveFingerprint,
-  investigationComplete:
-    evidence.length > 0
-};
+
+  // Detective score
+  const detectiveScore = Math.min(
+    100,
+    Math.round(
+      confidence +
+      Math.min(20, Math.abs(priceDifference) * 2) +
+      Math.min(10, Math.abs(openInterestChange))
+    )
+  );
+
+  return {
+    evidence,
+    confidence,
+    detectiveScore,
+    marketType,
+    moveFingerprint,
+    investigationComplete:
+      evidence.length > 0
+  };
+}
