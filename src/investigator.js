@@ -6,12 +6,15 @@ export function investigateMove({
   fundingRate
 }) {
   const evidence = [];
+  let marketType = "UNCLEAR";
+
+  const priceDifference = priceChange - btcChange;
 
   if (Math.abs(priceChange) >= 5) {
     evidence.push({
       signal: "PRICE",
-      finding: `Price moved ${priceChange}%`,
-      weight: 30
+      finding: `Asset price moved ${priceChange}%`,
+      weight: 25
     });
   }
 
@@ -31,19 +34,42 @@ export function investigateMove({
     });
   }
 
+  if (Math.abs(priceDifference) >= 4) {
+    marketType = "ASSET_SPECIFIC";
+
+    evidence.push({
+      signal: "RELATIVE_STRENGTH",
+      finding:
+        `The asset moved ${priceDifference.toFixed(2)} percentage points ` +
+        `relative to BTC.`,
+      weight: 20
+    });
+  } else if (Math.abs(btcChange) >= 2) {
+    marketType = "MARKET_WIDE";
+
+    evidence.push({
+      signal: "MARKET_CONTEXT",
+      finding:
+        "BTC and the selected asset are moving in a similar direction.",
+      weight: 20
+    });
+  }
+
   if (Math.abs(openInterestChange) >= 10) {
     evidence.push({
       signal: "OPEN_INTEREST",
-      finding: `Open interest changed by ${openInterestChange}%`,
-      weight: 15
+      finding:
+        `Open interest changed by ${openInterestChange}%`,
+      weight: 10
     });
   }
 
   if (Math.abs(fundingRate) >= 0.03) {
     evidence.push({
       signal: "FUNDING",
-      finding: `Funding rate is ${fundingRate}%`,
-      weight: 15
+      finding:
+        `Funding rate is ${fundingRate}%`,
+      weight: 10
     });
   }
 
@@ -55,6 +81,7 @@ export function investigateMove({
   return {
     evidence,
     confidence,
+    marketType,
     investigationComplete: evidence.length > 0
   };
 }
