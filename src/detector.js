@@ -1,4 +1,8 @@
-export function detectMove(previousPrice, currentPrice, volumeChange) {
+export function detectMove(
+  previousPrice,
+  currentPrice,
+  volumeChange = 0
+) {
   const priceChange =
     ((currentPrice - previousPrice) / previousPrice) * 100;
 
@@ -14,10 +18,14 @@ export function detectMove(previousPrice, currentPrice, volumeChange) {
     movement = "UNUSUAL";
   }
 
+  const volumeAnomaly = volumeChange >= 50;
+
   return {
     priceChange: Number(priceChange.toFixed(2)),
     volumeChange,
+    volumeAnomaly,
     movement,
-    detected: movement !== "NORMAL"
+    detected:
+      movement !== "NORMAL" || volumeAnomaly
   };
 }
