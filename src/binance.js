@@ -1,15 +1,19 @@
 const BINANCE_API = "https://api.binance.com";
 
-export async function getTicker(symbol) {
-  const response = await fetch(
-    `${BINANCE_API}/api/v3/ticker/24hr?symbol=${symbol}`
-  );
+async function binanceRequest(endpoint) {
+  const response = await fetch(`${BINANCE_API}${endpoint}`);
 
   if (!response.ok) {
     throw new Error(`Binance API error: ${response.status}`);
   }
 
-  const data = await response.json();
+  return response.json();
+}
+
+export async function getTicker(symbol) {
+  const data = await binanceRequest(
+    `/api/v3/ticker/24hr?symbol=${symbol}`
+  );
 
   return {
     symbol: data.symbol,
@@ -19,5 +23,17 @@ export async function getTicker(symbol) {
     quoteVolume: Number(data.quoteVolume),
     high: Number(data.highPrice),
     low: Number(data.lowPrice)
+  };
+}
+
+export async function getMarketContext(symbol) {
+  const [asset, btc] = await Promise.all([
+    getTicker(symbol),
+    getTicker("BTCUSDT")
+  ]);
+
+  return {
+    asset,
+    btc
   };
 }
