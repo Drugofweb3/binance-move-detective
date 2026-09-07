@@ -78,6 +78,10 @@ async function runDetective() {
       `Market type: ${investigation.marketType}`
     );
 
+console.log(
+  `Move fingerprint: ${investigation.moveFingerprint}`
+);
+
     console.log("\nEvidence:");
     console.log(report.evidence);
 
